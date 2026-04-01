@@ -1107,10 +1107,7 @@
                                                 <i class="bi bi-pencil-fill"></i>
                                                 <span class="act-label">Düzenle</span>
                                             </a>
-                                            <a asp-area="Admin"
-                                               asp-controller="Booking"
-                                               asp-action="CreateBooking"
-                                               asp-route-flightId="@f.FlightId"
+                                            <a href="/Admin/Booking/CreateBooking/@f.FlightId"
                                                class="act act-book">
                                                 <i class="bi bi-ticket-perforated-fill"></i>
                                                 <span class="act-label">Rezerve Et</span>

@@ -1,12 +1,12 @@
-﻿using FlightBooking.Entities;
+﻿using FlightBooking.DTOs.PassengerDTOs;
 
 namespace FlightBooking.DTOs.BookingDTOs
 {
-    public class CreateBookingDTOs
+    public class CreateBookingDTO
     {
         public string FlightId { get; set; }
 
-        public List<Passenger> Passengers { get; set; }
+        public List<CreatePassengerDTO> Passengers { get; set; }
 
         public string ContactEmail { get; set; }
         public string ContactName { get; set; }
