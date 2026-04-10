@@ -10,7 +10,7 @@ namespace FlightBooking.Entities
         public string BookingId { get; set; }
 
         public string FlightId { get; set; }
-
+        public string PnrNumber { get; set; }
         public List<Passenger> Passengers { get; set; }
 
         public string ContactEmail { get; set; }
