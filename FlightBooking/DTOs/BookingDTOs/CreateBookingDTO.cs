@@ -11,5 +11,6 @@ namespace FlightBooking.DTOs.BookingDTOs
         public string ContactEmail { get; set; }
         public string ContactName { get; set; }
         public string ContactPhone { get; set; }
+        public string PnrNumber { get; set; }
     }
 }
