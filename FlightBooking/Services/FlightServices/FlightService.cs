@@ -24,25 +24,25 @@ namespace FlightBooking.Services.FlightServices
 
         public async Task CreateFlightAsync(CreateFlightDTO createFlightDTO)
         {
-            var flightEntity = _mapper.Map<Flight>(createFlightDTO);
-            await _flightCollection.InsertOneAsync(flightEntity);
+            var values = _mapper.Map<Flight>(createFlightDTO);
+            await _flightCollection.InsertOneAsync(values);
         }
 
         public async Task DeleteFlightAsync(string id)
         {
-            await _flightCollection.DeleteOneAsync(flight => flight.FlightId == id);
+            await _flightCollection.DeleteOneAsync(x => x.FlightId == id);
         }
-
+        
         public async Task<List<ResultFlightDTO>> GetAllFlightsAsync()
         {
-            var flights = await _flightCollection.Find(x => true).ToListAsync();
-            return _mapper.Map<List<ResultFlightDTO>>(flights);
+            var values = await _flightCollection.Find(x => true).ToListAsync();
+            return _mapper.Map<List<ResultFlightDTO>>(values);
         }
 
         public async Task<GetFlightByIdDTO> GetFlightByIdAsync(string id)
         {
-            var flight = await _flightCollection.Find(flight => flight.FlightId == id).FirstOrDefaultAsync();
-            return _mapper.Map<GetFlightByIdDTO>(flight);
+            var value = await _flightCollection.Find(x => x.FlightId == id).FirstOrDefaultAsync();
+            return _mapper.Map<GetFlightByIdDTO>(value);
         }
 
         public async Task<List<PassengerListItemDTO>> GetFlightDetailsWithPassengers(string id)
@@ -59,23 +59,22 @@ namespace FlightBooking.Services.FlightServices
                     Email = b.ContactEmail,   // yolcuya ait email yoksa iletişim emaili kullan
                     Gender = p.Gender,
                     PassengerType = p.PassengerType,
-                    Pnr = b.BookingId,       // PNR olarak BookingId kullanılıyor
+                    PnrNumber = b.PnrNumber,       // PNR olarak BookingId kullanılıyor
                     Phone = b.ContactPhone,
                     // Aşağıdaki alanlar Passenger entity'nde varsa doğrudan al
                     SeatNumber = p.SeatNumber,
                     CheckInStatus = p.CheckInStatus,
                     // PaymentStatus = b.PaymentStatus,
                     TicketStatus = p.TicketStatus,
-                }))
-                .ToList();
-
+                    PassengerId = p.PassengerId
+                })).ToList();
             return passengers;
         }
 
         public async Task UpdateFlightAsync(UpdateFlightDTO updateFlightDTO)
         {
-            var flightEntity = _mapper.Map<Flight>(updateFlightDTO);
-            await _flightCollection.FindOneAndReplaceAsync(flight => flight.FlightId == updateFlightDTO.FlightId, flightEntity);
+            var values = _mapper.Map<Flight>(updateFlightDTO);
+            await _flightCollection.FindOneAndReplaceAsync(x => x.FlightId == updateFlightDTO.FlightId, values);
         }
     }
 }
