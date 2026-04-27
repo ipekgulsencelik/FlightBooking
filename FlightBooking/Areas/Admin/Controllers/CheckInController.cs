@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using FlightBooking.Entities;
-using FlightBooking.Settings;
+﻿using FlightBooking.Services.BookingServices;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 
 namespace FlightBooking.Areas.Admin.Controllers
 {
@@ -10,17 +7,11 @@ namespace FlightBooking.Areas.Admin.Controllers
     [Route("[area]/[controller]/[action]/{id?}")]
     public class CheckInController : Controller
     {
-        private readonly IMapper _mapper;
-        private readonly IMongoCollection<Flight> _flightCollection;
-        private readonly IMongoCollection<Booking> _bookingCollection;
+        private readonly IBookingService _bookingService;
 
-        public CheckInController(IMapper mapper, IDatabaseSettings _databaseSettings)
+        public CheckInController(IBookingService bookingService)
         {
-            var client = new MongoClient(_databaseSettings.ConnectionString);
-            var database = client.GetDatabase(_databaseSettings.DatabaseName);
-            _flightCollection = database.GetCollection<Flight>(_databaseSettings.FlightCollectionName);
-            _bookingCollection = database.GetCollection<Booking>(_databaseSettings.BookingCollectionName);
-            _mapper = mapper;
+            _bookingService = bookingService;
         }
 
         public async Task<IActionResult> Index(string id)
@@ -28,6 +19,11 @@ namespace FlightBooking.Areas.Admin.Controllers
             ViewBag.FlightNumber = TempData["FlightNumber"];
             ViewBag.DepartureTime = TempData["DepartureTime"];
             ViewBag.ArrivalTime = TempData["ArrivalTime"];
+
+            var passenger = await _bookingService.GetPassengerNameByIdAsync(id);
+
+            ViewBag.Name = passenger.Name;
+            ViewBag.Surname = passenger.Surname;
 
             return View();
         }

@@ -1,4 +1,4 @@
-﻿@* ============================================================
+﻿﻿@* ============================================================
    Areas/Admin/Views/Bookings/CheckIn.cshtml
    SADECE CONTENT — Layout hazır
    ViewBag: FlightNumber, AirlineCode,
@@ -10,8 +10,8 @@
 ============================================================ *@
 
 @{
-    ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Layout/AdminLayout.cshtml";
+    ViewData["Title"] = "Check-In";
 }
 
 @section Styles {
@@ -1597,7 +1597,7 @@
                     </div>
                     <div class="ci-meta-item">
                         <span class="ci-meta-key">Yolcu</span>
-                        <span class="ci-meta-val">@ViewBag.PassengerName</span>
+                        <span class="ci-meta-val">@ViewBag.Name @ViewBag.Surname</span>
                     </div>
                     <div class="ci-meta-item">
                         <span class="ci-meta-key">PNR</span>
@@ -2566,4 +2566,3 @@
 
     </script>
 }
-
