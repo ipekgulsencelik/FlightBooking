@@ -18,10 +18,58 @@ namespace FlightBooking.Services.CheckInServices
             _bookingCollection = database.GetCollection<Booking>(settings.BookingCollectionName);
             _checkInCollection = database.GetCollection<CheckIn>(settings.CheckInCollectionName);
         }
-
-        public Task CompleteCheckInAsync(CompleteCheckInDTO completeCheckInDTO)
+        public async Task CompleteCheckInAsync(CompleteCheckInDTO completeCheckInDTO)
         {
-            throw new NotImplementedException();
+            // 🔥 1. Passenger'ı içeren booking'i bul
+            var booking = await _bookingCollection.Find(x => x.Passengers.Any(p => p.PassengerId == completeCheckInDTO.PassengerId)).FirstOrDefaultAsync();
+
+            if (booking == null)
+                throw new Exception("Booking bulunamadı");
+
+            var passenger = booking.Passengers.FirstOrDefault(p => p.PassengerId == completeCheckInDTO.PassengerId);
+
+            if (passenger == null)
+                throw new Exception("Yolcu bulunamadı");
+
+            // 🔥 2. Boarding Pass No üret (random)
+            var boardingPass = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+
+            // 🔥 3. Gate (örnek random)
+            var gates = new[] { "A1", "A2", "B5", "C3", "D7" };
+            var randomGate = gates[new Random().Next(gates.Length)];
+
+            // 🔥 4. Passenger update (Mongo)
+            var filter = Builders<Booking>.Filter.ElemMatch(x => x.Passengers, p => p.PassengerId == completeCheckInDTO.PassengerId);
+
+            var update = Builders<Booking>.Update
+                       .Set("Passengers.$.IsCheckedIn", true)
+                       .Set("Passengers.$.CheckInDate", DateTime.Now)
+                       .Set("Passengers.$.SeatNumber", completeCheckInDTO.SeatNumber)
+                       .Set("Passengers.$.BaggageKg", completeCheckInDTO.BaggageKg)
+                       .Set("Passengers.$.MealType", completeCheckInDTO.MealType)
+                       .Set("Passengers.$.ExtraServices", completeCheckInDTO.ExtraServices)
+                       .Set("Passengers.$.BoardingPassNumber", boardingPass)
+                       .Set("Passengers.$.Gate", randomGate)
+                       .Set("Passengers.$.BoardingTime", DateTime.Now.AddMinutes(30)); // örnek
+
+            await _bookingCollection.UpdateOneAsync(filter, update);
+
+            // 🔥 5. CheckIn kaydı oluştur (LOG)
+            var checkIn = new CheckIn
+            {
+                CheckInId = Guid.NewGuid().ToString(),
+                PassengerId = completeCheckInDTO.PassengerId,
+                FlightId = booking.FlightId,
+                PnrNumber = booking.PnrNumber,
+
+                CheckInDate = DateTime.Now,
+                IsCheckedIn = true,
+
+                SeatNumber = completeCheckInDTO.SeatNumber,
+                ExtraTotalPrice = completeCheckInDTO.ExtraTotalPrice
+            };
+
+            await _checkInCollection.InsertOneAsync(checkIn);
         }
     }
 }

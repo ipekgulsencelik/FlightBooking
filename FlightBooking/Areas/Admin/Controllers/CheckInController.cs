@@ -1,4 +1,6 @@
-﻿using FlightBooking.Services.BookingServices;
+﻿using FlightBooking.DTOs.CheckInDTOs;
+using FlightBooking.Services.BookingServices;
+using FlightBooking.Services.CheckInServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlightBooking.Areas.Admin.Controllers
@@ -7,11 +9,13 @@ namespace FlightBooking.Areas.Admin.Controllers
     [Route("[area]/[controller]/[action]/{id?}")]
     public class CheckInController : Controller
     {
+        private readonly ICheckInService _checkInService;
         private readonly IBookingService _bookingService;
 
-        public CheckInController(IBookingService bookingService)
+        public CheckInController(IBookingService bookingService, ICheckInService checkInService)
         {
             _bookingService = bookingService;
+            _checkInService = checkInService;
         }
 
         public async Task<IActionResult> Index(string id)
@@ -32,9 +36,12 @@ namespace FlightBooking.Areas.Admin.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Index()
+        [HttpPost]
+        public async Task<IActionResult> Index(CompleteCheckInDTO completeCheckInDTO)
         {
-            return RedirectToAction("");
+            await _checkInService.CompleteCheckInAsync(completeCheckInDTO);
+
+            return RedirectToAction("Test");
         }
     }
 }
