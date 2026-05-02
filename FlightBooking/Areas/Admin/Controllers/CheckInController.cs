@@ -23,6 +23,13 @@ namespace FlightBooking.Areas.Admin.Controllers
             ViewBag.FlightNumber = TempData["FlightNumber"];
             ViewBag.DepartureTime = TempData["DepartureTime"];
             ViewBag.ArrivalTime = TempData["ArrivalTime"];
+            ViewBag.AirlineCode = TempData["AirlineCode"];          
+            ViewBag.DepartureAirportCode = TempData["DepartureAirportCode"];
+            ViewBag.DepartureAirportName = TempData["DepartureAirportName"];
+            ViewBag.ArrivalAirportCode = TempData["ArrivalAirportCode"];
+            ViewBag.ArrivalAirportName = TempData["ArrivalAirportName"];
+            ViewBag.BasePrice = TempData["BasePrice"];
+            ViewBag.Currency = TempData["Currency"];
 
             var passenger = await _bookingService.GetPassengerNameByIdAsync(id);
             var pnrNumber = await _bookingService.GetPnrByPassengerIdAsync(id);
@@ -30,8 +37,14 @@ namespace FlightBooking.Areas.Admin.Controllers
 
             ViewBag.Name = passenger.Name;
             ViewBag.Surname = passenger.Surname;
+            ViewBag.PassengerName = passenger.Name + " " + passenger.Surname;
             ViewBag.PnrNumber = pnrNumber;
+            ViewBag.Pnr = pnrNumber;   
             ViewBag.Gate = gate;
+
+            // 🔥 Form için gerekli — hidden field olarak view'a taşınacak
+            ViewBag.PassengerId = id;
+            ViewBag.FlightId = "69c394a7ca107d148d4d4e10";
 
             return View();
         }
